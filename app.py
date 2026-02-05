@@ -23,7 +23,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # ==============================
 device = torch.device("cpu")
 
-resnet = models.resnet18(pretrained=True)
+from torchvision.models import resnet18, ResNet18_Weights
+resnet = resnet18(weights=ResNet18_Weights.DEFAULT)
 resnet = torch.nn.Sequential(*list(resnet.children())[:-1])
 resnet.eval()
 resnet.to(device)
@@ -71,15 +72,24 @@ def classify_behavior(feature_buffer):
 # MULTI-CAMERA SETUP
 # ==============================
 CAMERA_SOURCES = {
-    0: 0,
+    
     1: r"F:\naveen\Project_Own\Multi-Camera Crowd Behavior\Videos\5286466-hd_1920_1080_30fps.mp4",
     2: r"F:\naveen\Project_Own\Multi-Camera Crowd Behavior\Videos\5286504-hd_1920_1080_30fps.mp4"
 }
 
-caps = {cid: cv2.VideoCapture(src) for cid, src in CAMERA_SOURCES.items()}
-FEATURE_BUFFERS = {cid: deque(maxlen=16) for cid in CAMERA_SOURCES.keys()}
-LAST_BEHAVIOR = {cid: "Monitoring" for cid in CAMERA_SOURCES.keys()}
+caps = {}
+FEATURE_BUFFERS = {}
+LAST_BEHAVIOR = {}
 INFERENCE_INTERVAL = 5
+
+for cid, src in CAMERA_SOURCES.items():
+    if isinstance(src, int):
+        # Skip webcam on cloud
+        continue
+
+    caps[cid] = cv2.VideoCapture(src)
+    FEATURE_BUFFERS[cid] = deque(maxlen=16)
+    LAST_BEHAVIOR[cid] = "Monitoring"
 
 # ==============================
 # LIVE CAMERA STREAM
@@ -198,4 +208,5 @@ def processed_video(filename):
 # RUN APP
 # ==============================
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
