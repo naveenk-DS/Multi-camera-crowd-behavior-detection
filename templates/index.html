@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multi-Camera Crowd Behavior Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <section class="upload-section">
+    <h2>Try It Yourself</h2>
+    <p>
+        Upload your own crowd video. The system will automatically analyze
+        and detect <strong>abnormal crowd behavior</strong>.
+    </p>
+
+    <form class="upload-form" method="POST" action="/analyze" enctype="multipart/form-data">
+        <input type="file" name="video" accept="video/*" required>
+
+        <button type="submit">Analyze Crowd Behavior</button>
+    </form>
+
+    <div class="result-box">
+        <h3>Analysis Result</h3>
+        <p>
+            🚨 Sudden Dispersion / Abnormal Speed will be shown here if detected.
+        </p>
+        <p class="note">
+            If no alert appears, the system continues monitoring.
+        </p>
+    </div>
+</section>
+
+</head>
+<body>
+
+    <header>
+        <h1>Real-Time Multi-Camera Crowd Behavior Analysis 🚀</h1>
+        <p>Deep Learning Based Crowd Monitoring Dashboard 😀 </p>
+    </header>
+
+    <main class="grid-container">
+        {% for cam_id in cameras %}
+        <div class="camera-card">
+            <h2>Camera {{ cam_id }}</h2>
+            <img src="{{ url_for('video_feed', cam_id=cam_id) }}" alt="Camera {{ cam_id }}">
+        </div>
+        {% endfor %}
+    </main>
+
+    <footer>
+        <p> Thank You visiting My web page ❤️</p>
+    </footer>
+
+</body>
+</html>
+
+
+
+

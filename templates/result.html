@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crowd Behavior Analysis Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="result-box">
+    <h2>Analysis Result</h2>
+
+    {% if result == "Monitoring" %}
+        <p>No abnormal crowd behavior detected.</p>
+    {% else %}
+        <p class="alert">🚨 {{ result }} detected</p>
+    {% endif %}
+
+    <a href="/">⬅ Go Back</a>
+</div>
+
+</body>
+</html>

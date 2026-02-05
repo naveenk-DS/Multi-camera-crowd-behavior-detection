@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Crowd Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2 style="text-align:center; margin:20px;">
+    Crowd Behavior Analysis (Live Visualization)
+</h2>
+
+<div class="video-container">
+    <img
+        src="{{ url_for('processed_video', filename=filename) }}"
+        class="analysis-video"
+    >
+</div>
+
+<div class="legend">
+    <p><span class="green-box"></span> Normal / Monitoring</p>
+    <p><span class="red-box"></span> Abnormal (Dispersion / Speed)</p>
+</div>
+
+<div style="text-align:center; margin-top:20px;">
+    <a href="/">⬅ Go Back</a>
+</div>
+
+</body>
+</html>
