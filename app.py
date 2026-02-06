@@ -59,20 +59,22 @@ def classify_behavior(feature_buffer):
         return "Monitoring"
 
     features = np.array(feature_buffer)
-    motion = np.mean(np.abs(np.diff(features, axis=0)))
+    diffs = np.linalg.norm(np.diff(features, axis=0), axis=1)
+    motion_score = np.mean(diffs)
 
-    if motion > 0.25:
+    if motion_score > 12.0:
         return "Abnormal Speed"
-    elif motion > 0.12:
+    elif motion_score > 6.0:
         return "Sudden Dispersion"
     else:
         return "Monitoring"
+
 
 # ==============================
 # MULTI-CAMERA SETUP
 # ==============================
 CAMERA_SOURCES = {
-    
+    0: 0,
     1: r"F:\naveen\Project_Own\Multi-Camera Crowd Behavior\Videos\5286466-hd_1920_1080_30fps.mp4",
     2: r"F:\naveen\Project_Own\Multi-Camera Crowd Behavior\Videos\5286504-hd_1920_1080_30fps.mp4"
 }
@@ -82,14 +84,11 @@ FEATURE_BUFFERS = {}
 LAST_BEHAVIOR = {}
 INFERENCE_INTERVAL = 5
 
-for cid, src in CAMERA_SOURCES.items():
-    if isinstance(src, int):
-        # Skip webcam on cloud
-        continue
+for cam_id, src in CAMERA_SOURCES.items():
+    caps[cam_id] = cv2.VideoCapture(src)
+    FEATURE_BUFFERS[cam_id] = deque(maxlen=16)
+    LAST_BEHAVIOR[cam_id] = "Monitoring"
 
-    caps[cid] = cv2.VideoCapture(src)
-    FEATURE_BUFFERS[cid] = deque(maxlen=16)
-    LAST_BEHAVIOR[cid] = "Monitoring"
 
 # ==============================
 # LIVE CAMERA STREAM
@@ -116,12 +115,12 @@ def generate_frames(cam_id):
 
         cv2.putText(
             frame,
-            f"Camera {cam_id} | {behavior}",
-            (10, 30),
+            behavior,
+            (20, 40),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.8,
+            1,
             (0, 255, 0) if behavior == "Monitoring" else (0, 0, 255),
-            2
+            3
         )
 
         ret, buffer = cv2.imencode(".jpg", frame)
